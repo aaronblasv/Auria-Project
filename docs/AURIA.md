@@ -54,10 +54,10 @@ La estructura interna funciona como un Terminal Punto de Venta:
 
 | Persona | Rol principal | Responsable de |
 |---|---|---|
-| _Tu nombre_ | _por definir_ | _por definir_ |
-| _Compañero_ | _por definir_ | _por definir_ |
+| Aarón | Frontend | Angular, Angular Material, integración con la API, UX |
+| Miguel | Backend | Symfony, Doctrine, MySQL, autenticación JWT, endpoints |
 
-**Sugerencia de reparto:** uno se encarga del backend (Symfony + MySQL) y el otro del frontend (Angular). Quien acabe primero ayuda al otro. La memoria y el despliegue se hacen entre los dos.
+**Reparto:** Aarón implementa la SPA en Angular siguiendo `FRONTEND.md`. Miguel implementa la API en Symfony siguiendo `BACKEND.md`. Ambos respetan el contrato definido en `ENDPOINTS.md` — cualquier cambio en la API se acuerda y se actualiza primero ahí. La memoria y el despliegue se hacen entre los dos.
 
 ---
 
