@@ -1,0 +1,17 @@
+# Symfony
+/api/vendor/
+/api/var/
+/api/.env.local
+/api/.env.local.php
+/api/config/jwt/*.pem
+
+# Angular
+/front/node_modules/
+/front/dist/
+/front/.angular/
+
+# Editores y SO
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
