@@ -1,0 +1,42 @@
+<mat-card class="profile-card">
+  <mat-card-header>
+    <mat-card-title>Mi perfil</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>URL de foto (opcional)</mat-label>
+        <input matInput formControlName="foto" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Canal de contacto</mat-label>
+        <mat-select formControlName="contactoPreferido">
+          <mat-option value="instagram">Instagram</mat-option>
+          <mat-option value="telefono">Teléfono</mat-option>
+          <mat-option value="email">Email</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tu identificador</mat-label>
+        <input matInput formControlName="contactoValor" />
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid || loading()"
+      >
+        Guardar cambios
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

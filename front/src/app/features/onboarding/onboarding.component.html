@@ -1,0 +1,110 @@
+<mat-card class="onboarding-card">
+  <mat-card-header>
+    <mat-card-title>Completa tu perfil</mat-card-title>
+    <mat-card-subtitle>Cuéntanos qué estudias y en qué puedes ayudar</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-stepper linear>
+      <!-- Paso 1: dónde estudias -->
+      <mat-step [stepControl]="stepCurso" label="Dónde estudias">
+        <form [formGroup]="stepCurso">
+          <mat-form-field appearance="outline">
+            <mat-label>Centro</mat-label>
+            <mat-select
+              formControlName="centroId"
+              (selectionChange)="onCentroChange($event.value)"
+            >
+              @for (centro of centros(); track centro.id) {
+                <mat-option [value]="centro.id">{{ centro.nombre }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Grado</mat-label>
+            <mat-select
+              formControlName="gradoId"
+              [disabled]="grados().length === 0"
+              (selectionChange)="onGradoOrCursoChange()"
+            >
+              @for (grado of grados(); track grado.id) {
+                <mat-option [value]="grado.id">{{ grado.nombre }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Curso actual</mat-label>
+            <mat-select formControlName="curso" (selectionChange)="onGradoOrCursoChange()">
+              <mat-option [value]="1">1º</mat-option>
+              <mat-option [value]="2">2º</mat-option>
+              <mat-option [value]="3">3º</mat-option>
+              <mat-option [value]="4">4º</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="step-actions">
+            <button mat-button matStepperNext [disabled]="stepCurso.invalid">Siguiente</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Paso 2: qué ofreces -->
+      <mat-step label="Qué ofreces">
+        <p>Selecciona las asignaturas que ya has aprobado y puedes ayudar a otros con ellas:</p>
+
+        @if (asignaturas().length === 0) {
+          <p class="muted">Selecciona primero un grado y curso.</p>
+        }
+
+        <div class="asig-list">
+          @for (asig of asignaturas(); track asig.id) {
+            <mat-checkbox
+              [checked]="asignaturasSeleccionadas().has(asig.id)"
+              (change)="toggleAsignatura(asig.id, $event.checked)"
+            >
+              {{ asig.nombre }} ({{ asig.curso }}º)
+            </mat-checkbox>
+          }
+        </div>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>Atrás</button>
+          <button mat-button matStepperNext>Siguiente</button>
+        </div>
+      </mat-step>
+
+      <!-- Paso 3: contacto -->
+      <mat-step [stepControl]="stepContacto" label="Cómo te contactan">
+        <form [formGroup]="stepContacto">
+          <mat-form-field appearance="outline">
+            <mat-label>Canal preferido</mat-label>
+            <mat-select formControlName="contactoPreferido">
+              <mat-option value="instagram">Instagram</mat-option>
+              <mat-option value="telefono">Teléfono</mat-option>
+              <mat-option value="email">Email</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tu identificador (handle, número o email)</mat-label>
+            <input matInput formControlName="contactoValor" />
+          </mat-form-field>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>Atrás</button>
+            <button
+              mat-raised-button
+              color="primary"
+              [disabled]="stepContacto.invalid || loading()"
+              (click)="finalizar()"
+            >
+              Finalizar
+            </button>
+          </div>
+        </form>
+      </mat-step>
+    </mat-stepper>
+  </mat-card-content>
+</mat-card>
