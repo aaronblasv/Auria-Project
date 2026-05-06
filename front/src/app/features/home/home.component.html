@@ -1,0 +1,90 @@
+<section class="search-panel">
+  <h1>Encuentra a quién te puede ayudar</h1>
+
+  <mat-button-toggle-group
+    [value]="modo()"
+    (change)="cambiarModo($event.value)"
+    class="modo-toggle"
+  >
+    <mat-button-toggle value="grado">Por grado y curso</mat-button-toggle>
+    <mat-button-toggle value="asignatura">Por asignatura concreta</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <div class="filtros">
+    <mat-form-field appearance="outline">
+      <mat-label>Centro</mat-label>
+      <mat-select [value]="centroId()" (selectionChange)="onCentroChange($event.value)">
+        @for (c of centros(); track c.id) {
+          <mat-option [value]="c.id">{{ c.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Grado</mat-label>
+      <mat-select
+        [value]="gradoId()"
+        [disabled]="grados().length === 0"
+        (selectionChange)="onGradoChange($event.value)"
+      >
+        @for (g of grados(); track g.id) {
+          <mat-option [value]="g.id">{{ g.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (modo() === 'grado') {
+      <mat-form-field appearance="outline">
+        <mat-label>Curso (opcional)</mat-label>
+        <mat-select [value]="curso()" (selectionChange)="curso.set($event.value)">
+          <mat-option [value]="null">Todos</mat-option>
+          <mat-option [value]="1">1º</mat-option>
+          <mat-option [value]="2">2º</mat-option>
+          <mat-option [value]="3">3º</mat-option>
+          <mat-option [value]="4">4º</mat-option>
+        </mat-select>
+      </mat-form-field>
+    } @else {
+      <mat-form-field appearance="outline">
+        <mat-label>Asignatura</mat-label>
+        <mat-select
+          [value]="asignaturaId()"
+          [disabled]="asignaturas().length === 0"
+          (selectionChange)="asignaturaId.set($event.value)"
+        >
+          @for (a of asignaturas(); track a.id) {
+            <mat-option [value]="a.id">{{ a.nombre }} ({{ a.curso }}º)</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="buscar()"
+      [disabled]="
+        (modo() === 'grado' && !gradoId()) ||
+        (modo() === 'asignatura' && !asignaturaId())
+      "
+    >
+      Buscar
+    </button>
+  </div>
+</section>
+
+<section class="results">
+  @if (loading()) {
+    <div class="spinner-wrap">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else if (ofertas().length === 0) {
+    <p class="muted">No hay resultados todavía. Aplica filtros y pulsa Buscar.</p>
+  } @else {
+    <div class="grid">
+      @for (oferta of ofertas(); track oferta.id) {
+        <app-oferta-card [oferta]="oferta" />
+      }
+    </div>
+  }
+</section>
