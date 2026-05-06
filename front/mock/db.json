@@ -39,11 +39,30 @@
       "grado": { "id": 1, "nombre": "DAW" }
     }
   ],
+  "users": [
+    {
+      "id": 1,
+      "email": "demo@florida.edu",
+      "nombre": "Demo User",
+      "foto": null,
+      "cursoActual": { "id": 3, "grado": "DAW", "curso": 2 },
+      "contactoPreferido": "instagram",
+      "contactoValor": "@demo",
+      "createdAt": "2025-03-15T15:00:00+00:00"
+    }
+  ],
+  "contactos": [
+    {
+      "id": 1,
+      "preferido": "instagram",
+      "valor": "@demo"
+    }
+  ],
   "ofertas": [
     {
       "id": 1,
       "user": {
-        "id": 2,
+        "id": 1,
         "nombre": "Demo User",
         "foto": null,
         "cursoActual": { "id": 3, "grado": "DAW", "curso": 2 }

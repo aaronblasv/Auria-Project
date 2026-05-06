@@ -1,3 +1,5 @@
 {
+  "/api/ofertas/me": "/ofertas?user.id=1",
+  "/api/users/:id/contacto": "/contactos/:id",
   "/api/*": "/$1"
 }
