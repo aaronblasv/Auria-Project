@@ -1,0 +1,61 @@
+{
+  "centros": [
+    { "id": 1, "nombre": "Florida Universitària" }
+  ],
+  "grados": [
+    {
+      "id": 1,
+      "nombre": "DAW",
+      "centro": { "id": 1, "nombre": "Florida Universitària" }
+    },
+    {
+      "id": 2,
+      "nombre": "ASIR",
+      "centro": { "id": 1, "nombre": "Florida Universitària" }
+    },
+    {
+      "id": 3,
+      "nombre": "DAM",
+      "centro": { "id": 1, "nombre": "Florida Universitària" }
+    }
+  ],
+  "asignaturas": [
+    {
+      "id": 1,
+      "nombre": "Programación",
+      "curso": 1,
+      "grado": { "id": 1, "nombre": "DAW" }
+    },
+    {
+      "id": 2,
+      "nombre": "Bases de Datos",
+      "curso": 1,
+      "grado": { "id": 1, "nombre": "DAW" }
+    },
+    {
+      "id": 3,
+      "nombre": "Desarrollo Web Cliente",
+      "curso": 2,
+      "grado": { "id": 1, "nombre": "DAW" }
+    }
+  ],
+  "ofertas": [
+    {
+      "id": 1,
+      "user": {
+        "id": 2,
+        "nombre": "Demo User",
+        "foto": null,
+        "cursoActual": { "id": 3, "grado": "DAW", "curso": 2 }
+      },
+      "asignatura": {
+        "id": 1,
+        "nombre": "Programación",
+        "curso": 1,
+        "grado": { "id": 1, "nombre": "DAW" }
+      },
+      "descripcionCorta": "Doy clases de Programación de 1º DAW",
+      "createdAt": "2025-03-15T15:00:00+00:00"
+    }
+  ]
+}
