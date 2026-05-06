@@ -1,0 +1,24 @@
+<mat-toolbar color="primary">
+  <a routerLink="/" class="brand">AURIA</a>
+
+  <span class="spacer"></span>
+
+  @if (isLoggedIn()) {
+    <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      Buscar
+    </a>
+    <a mat-button routerLink="/mis-ofertas" routerLinkActive="active">Mis ofertas</a>
+
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item disabled>{{ userName() }}</button>
+      <a mat-menu-item routerLink="/mi-perfil">Mi perfil</a>
+      <button mat-menu-item (click)="logout()">Cerrar sesión</button>
+    </mat-menu>
+  } @else {
+    <a mat-button routerLink="/login">Entrar</a>
+    <a mat-raised-button color="accent" routerLink="/register">Registrarse</a>
+  }
+</mat-toolbar>

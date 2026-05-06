@@ -14,13 +14,31 @@ import {
 const TOKEN_KEY = 'auria_token';
 const USER_KEY = 'auria_user';
 
+function getStorage(): Storage | null {
+  const storage = globalThis.localStorage;
+  if (
+    storage &&
+    typeof storage.getItem === 'function' &&
+    typeof storage.setItem === 'function' &&
+    typeof storage.removeItem === 'function'
+  ) {
+    return storage;
+  }
+
+  return null;
+}
+
+function readStorageItem(key: string): string | null {
+  return getStorage()?.getItem(key) ?? null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
   // Estado interno con signals
-  private _token = signal<string | null>(localStorage.getItem(TOKEN_KEY));
+  private _token = signal<string | null>(readStorageItem(TOKEN_KEY));
   private _user = signal<User | null>(this.loadStoredUser());
 
   // Lecturas públicas (read-only)
@@ -43,8 +61,9 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    const storage = getStorage();
+    storage?.removeItem(TOKEN_KEY);
+    storage?.removeItem(USER_KEY);
     this._token.set(null);
     this._user.set(null);
     this.router.navigate(['/login']);
@@ -52,19 +71,20 @@ export class AuthService {
 
   /** Refresca el user del estado tras un PATCH. */
   setUser(user: User): void {
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    getStorage()?.setItem(USER_KEY, JSON.stringify(user));
     this._user.set(user);
   }
 
   private persistSession(token: string, user: User): void {
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    const storage = getStorage();
+    storage?.setItem(TOKEN_KEY, token);
+    storage?.setItem(USER_KEY, JSON.stringify(user));
     this._token.set(token);
     this._user.set(user);
   }
 
   private loadStoredUser(): User | null {
-    const raw = localStorage.getItem(USER_KEY);
+    const raw = readStorageItem(USER_KEY);
     if (!raw) return null;
     try {
       return JSON.parse(raw) as User;
