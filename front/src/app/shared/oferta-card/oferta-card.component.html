@@ -1,0 +1,26 @@
+<mat-card class="oferta-card" (click)="abrirDetalle()">
+  <mat-card-header>
+    @if (oferta.user.foto) {
+      <img mat-card-avatar [src]="oferta.user.foto" alt="" />
+    } @else {
+      <div mat-card-avatar class="avatar-placeholder">
+        {{ oferta.user.nombre.charAt(0) }}
+      </div>
+    }
+    <mat-card-title>{{ oferta.asignatura.nombre }}</mat-card-title>
+    <mat-card-subtitle>
+      {{ oferta.asignatura.grado.nombre }} · {{ oferta.asignatura.curso }}º
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p class="autor">Por {{ oferta.user.nombre }}</p>
+    @if (oferta.descripcionCorta) {
+      <p class="desc">{{ oferta.descripcionCorta }}</p>
+    }
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-button color="primary">Ver más</button>
+  </mat-card-actions>
+</mat-card>

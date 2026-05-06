@@ -1,0 +1,65 @@
+@if (oferta(); as o) {
+  <a mat-button routerLink="/" class="back">← Volver</a>
+
+  <mat-card class="detail-card">
+    <mat-card-header>
+      @if (o.user.foto) {
+        <img mat-card-avatar [src]="o.user.foto" alt="" />
+      } @else {
+        <div mat-card-avatar class="avatar-placeholder">
+          {{ o.user.nombre.charAt(0) }}
+        </div>
+      }
+      <mat-card-title>{{ o.asignatura.nombre }}</mat-card-title>
+      <mat-card-subtitle>
+        {{ o.asignatura.grado.nombre }} · {{ o.asignatura.curso }}º curso
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p><strong>Ofrecido por:</strong> {{ o.user.nombre }}</p>
+      @if (o.user.cursoActual) {
+        <p>
+          <strong>Cursando actualmente:</strong>
+          {{ o.user.cursoActual.grado }} · {{ o.user.cursoActual.curso }}º
+        </p>
+      }
+      @if (o.descripcionCorta) {
+        <p>{{ o.descripcionCorta }}</p>
+      }
+    </mat-card-content>
+
+    <mat-card-actions>
+      @if (!contacto()) {
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="verContacto()"
+          [disabled]="loadingContacto()"
+        >
+          @if (loadingContacto()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <ng-container>
+              <mat-icon>chat</mat-icon>
+            </ng-container>
+            <span>Ver contacto</span>
+          }
+        </button>
+      } @else {
+        <div class="contacto-box">
+          <mat-icon>
+            {{
+              contacto()!.preferido === 'instagram'
+                ? 'photo_camera'
+                : contacto()!.preferido === 'telefono'
+                  ? 'phone'
+                  : 'email'
+            }}
+          </mat-icon>
+          <span>{{ contacto()!.preferido }}: <strong>{{ contacto()!.valor }}</strong></span>
+        </div>
+      }
+    </mat-card-actions>
+  </mat-card>
+}

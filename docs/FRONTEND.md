@@ -2,7 +2,7 @@
 
 > **Antes de empezar, lee `ENDPOINTS.md`.** Este archivo te dice cómo construir el frontend; el contrato te dice **qué** datos vas a recibir y enviar. Si hay una discrepancia, manda el contrato.
 
-> **Patrón que seguimos:** Angular 17+ con **standalone components** (sin NgModules). Reactive Forms para formularios, signals para el estado de auth, RxJS para llamadas HTTP, Angular Material para la UI. Una carpeta por feature. Un servicio por recurso del backend.
+> **Patrón que seguimos:** Angular 21 con **standalone components** (sin NgModules). Reactive Forms para formularios, signals para el estado de auth, RxJS para llamadas HTTP, Angular Material para la UI. Una carpeta por feature. Un servicio por recurso del backend.
 
 ---
 
@@ -36,15 +36,15 @@
 Verifica que tienes instalado:
 
 ```bash
-node --version    # 18.13+ o 20.x
-npm --version     # 9+
-ng version        # Angular CLI 17.x
+node --version    # 25.x (o 20.x / 22.x LTS)
+npm --version     # 11+
+ng version        # Angular CLI 21.x
 ```
 
 Si falta el CLI de Angular:
 
 ```bash
-npm install -g @angular/cli@17
+npm install -g @angular/cli
 ```
 
 Editor recomendado: **VS Code** con las extensiones:
@@ -60,27 +60,19 @@ Editor recomendado: **VS Code** con las extensiones:
 Desde la raíz del mono-repo (al lado de `/api`):
 
 ```bash
-ng new front --routing --style=scss --standalone --ssr=false
+ng new front --style=scss
 cd front
 ```
 
-Respuestas a las preguntas del CLI:
-
-- **Which stylesheet format?** → SCSS
-- **Server-side rendering / static prerendering?** → No
+Angular 21 crea proyectos standalone por defecto (no hay NgModules), sin SSR, y con routing incluido. No hace falta pasar flags adicionales.
 
 ### 2.1 Instalar dependencias
 
 ```bash
-npm install @angular/material @angular/cdk @angular/animations
 ng add @angular/material
 ```
 
-Cuando `ng add @angular/material` te pregunte:
-
-- **Theme** → Indigo/Pink (cualquiera vale, lo personalizamos luego).
-- **Typography styles?** → Yes
-- **Animations?** → Include and enable
+Cuando `ng add @angular/material` te pregunte, acepta las opciones por defecto. El tema y las animaciones se configuran automáticamente.
 
 ### 2.2 Comprobar que arranca
 
@@ -168,8 +160,7 @@ front/
 │   │   └── app.routes.ts
 │   │
 │   ├── environments/
-│   │   ├── environment.ts
-│   │   └── environment.development.ts
+│   │   └── environment.ts
 │   │
 │   ├── styles.scss
 │   ├── index.html
@@ -190,9 +181,9 @@ Reglas mentales:
 
 ## 4. Configuración inicial
 
-### 4.1 Environments
+### 4.1 Environment
 
-Crea `src/environments/environment.development.ts`:
+Crea un único archivo `src/environments/environment.ts`:
 
 ```typescript
 export const environment = {
@@ -201,29 +192,7 @@ export const environment = {
 };
 ```
 
-Crea `src/environments/environment.ts` (producción):
-
-```typescript
-export const environment = {
-  production: true,
-  apiUrl: 'https://auria-api.onrender.com/api',
-};
-```
-
-> La URL de producción es provisional (igual que en `ENDPOINTS.md`). Cuando se decida el dominio real, se cambia aquí.
-
-Asegúrate de que `angular.json` tiene el `fileReplacements` configurado (Angular 17 lo crea por defecto si pasaste `--routing`). Busca en `angular.json` el bloque `configurations.development` y verifica que aparece:
-
-```json
-"fileReplacements": [
-  {
-    "replace": "src/environments/environment.ts",
-    "with": "src/environments/environment.development.ts"
-  }
-]
-```
-
-Si no está, añádelo a mano.
+> Angular 21 no usa `fileReplacements` en `angular.json`. Para producción cambiarás esta URL cuando despleguéis. Para un proyecto académico es más que suficiente con un solo archivo.
 
 ### 4.2 `app.config.ts`
 
@@ -233,7 +202,6 @@ Reemplaza el contenido de `src/app/app.config.ts` por:
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { routes } from './app.routes';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
@@ -246,12 +214,11 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([jwtInterceptor, errorInterceptor])
     ),
-    provideAnimationsAsync(),
   ],
 };
 ```
 
-> Importante: el orden de los interceptors importa. **`jwtInterceptor` antes que `errorInterceptor`**: el primero añade el token, el segundo reacciona a 401/403/etc.
+> En Angular 21 las animaciones vienen habilitadas por defecto, no hace falta ningún `provideAnimations`. El orden de los interceptors importa: **`jwtInterceptor` antes que `errorInterceptor`** — el primero añade el token, el segundo reacciona a 401/403/etc.
 
 Aún no existen esos archivos. Los creamos en la sección 6.
 
@@ -2419,25 +2386,21 @@ export class MyOfertasComponent implements OnInit {
 
 `src/styles.scss`:
 
+> Si `ng add @angular/material` ya creó un `styles.scss` con un `@use` de tema, déjalo como está — ya es funcional. Solo añade las reglas de `html, body` y `*` al final si no están. Si quieres un tema personalizado o el archivo está vacío, usa esto:
+
 ```scss
 @use '@angular/material' as mat;
-@include mat.core();
 
-$auria-primary: mat.define-palette(mat.$indigo-palette);
-$auria-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-$auria-warn: mat.define-palette(mat.$red-palette);
-
-$auria-theme: mat.define-light-theme((
-  color: (
-    primary: $auria-primary,
-    accent: $auria-accent,
-    warn: $auria-warn,
-  ),
-  typography: mat.define-typography-config(),
-  density: 0,
-));
-
-@include mat.all-component-themes($auria-theme);
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$indigo-palette,
+      tertiary: mat.$pink-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
 
 html, body {
   margin: 0;
@@ -2451,7 +2414,7 @@ html, body {
 }
 ```
 
-> Si `ng add @angular/material` ya configuró un tema, este archivo te sirve de referencia para sustituirlo si quieres personalizar paleta. Si no, déjalo como está.
+> Angular Material 21 usa una API de theming simplificada con `mat.theme()`. Las antiguas funciones `define-palette`, `define-light-theme` y `all-component-themes` están deprecadas. Si te sale un warning de "legacy theming", usa el bloque de arriba.
 
 ---
 
@@ -2556,9 +2519,9 @@ Cuando el backend de tu compañero esté arrancado en `http://localhost:8000` y 
 
 ## 20. Checklist final
 
-- [ ] `ng new front` ejecutado
-- [ ] Material instalado y tema aplicado
-- [ ] Environments creados (`environment.ts` y `environment.development.ts`)
+- [ ] `ng new front --style=scss` ejecutado
+- [ ] Material instalado (`ng add @angular/material`) y tema aplicado
+- [ ] Environment creado (`environment.ts` con `apiUrl`)
 - [ ] Modelos TypeScript en `core/models/` (alineados 1:1 con `ENDPOINTS.md`)
 - [ ] `AuthService` con signals
 - [ ] `jwtInterceptor` y `errorInterceptor` registrados
